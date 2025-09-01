@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  oracle23ai:
+    image: container-registry.oracle.com/database/free:23.5.0.0
+    container_name: oracle23ai
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    environment:
+      - ORACLE_PWD=admin
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    networks:
+      - spring-jwt-network
+
+  maildev:
+    image: maildev/maildev
+    container_name: maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+
+volumes:
+  oracle-data:
+networks:
+  spring-jwt-network:
+    driver: bridge

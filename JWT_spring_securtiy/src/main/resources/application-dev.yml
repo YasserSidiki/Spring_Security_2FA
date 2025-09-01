@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
+    username: yasser
+    password: admin
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: oracle
+    database-platform: org.hibernate.dialect.OracleDialect
+
+
+  mail:
+    host: localhost
+    port: 1025
+    username: yasser
+    password: admin
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+
+
+  application:
+    security:
+      jwt:
+        secret-key: bf6060211bdcaa061c0adc1b4b1d1ca8e95bddfbbe32f8648f51ef4f3c09acc6
+        expiration: 8640000
+
+    mailing:
+      frontend:
+        activation-url: http://localhost:4200/activate-account
