@@ -35,17 +35,43 @@ export class Login {
         }
       ).subscribe({
         next: (res) => {
-          this.tokenService.token = res.token as string;
-          this.router.navigate(['dashboard'])
-        },
-        error: (err) => {
-          console.log(err);
-          if (err.error.validationErrors) {
-            this.errorMsg = err.error.validationErrors;
-          } else {
-            this.errorMsg.push(err.error.error);
+          if (res instanceof Blob) {
+            res.text().then((text) => {
+              const json = JSON.parse(text);
+              this.tokenService.token = json.token;
+              this.router.navigate(['dashboard']);
+            });
+          } else if (res.token) {
+            this.tokenService.token = res.token;
+            this.router.navigate(['dashboard']);
           }
         }
+        ,
+        error: async (err) => {
+          console.log('Raw error:', err);
+
+          let errorBody: any = err.error;
+
+          // If the error is a Blob, parse it
+          if (err.error instanceof Blob && err.error.type === 'application/json') {
+            const text = await err.error.text();
+            try {
+              errorBody = JSON.parse(text);
+            } catch (parseErr) {
+              console.error('Failed to parse error JSON', parseErr);
+            }
+          }
+
+          // Now display the messages
+          if (errorBody?.validationErrors) {
+            this.errorMsg = errorBody.validationErrors;
+          } else if (errorBody?.error) {
+            this.errorMsg = [errorBody.error];
+          } else {
+            this.errorMsg = ['An unknown error occurred'];
+          }
+        }
+
       });
   }
 
